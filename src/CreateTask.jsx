@@ -18,6 +18,7 @@ const CreateTask = ({ addTask, setShowForm, tasks }) => {
       id: tasks.length + 1,
       name: name.trim(),
       description: description.trim(),
+      status: 'To Do'
     }
 
     addTask(newTask);

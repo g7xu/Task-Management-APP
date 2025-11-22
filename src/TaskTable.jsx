@@ -8,7 +8,11 @@ const taskReducer = (state, action) => {
     case 'task/add':
       return [...state, action.payload];
     case 'task/toggleStatus':
-      return state;
+      return state.map(task => 
+        task.id === action.payload 
+        ? {...task, status: task.status === 'Completed' ? 'To Do': 'Completed'}
+        : task
+      );
     case 'task/setInitial':
       return action.payload;
     default:
@@ -20,7 +24,7 @@ const TaskTable = () => {
   const [showForm, setShowForm] = useState(false);
   const [tasks, dispatch] = useReducer(taskReducer, []);
 
-  //TODO: fetch 5 todo and add them to tasks from https://jsonplaceholder.typicode.com/todos when the component is first rendered.
+  // fecth default todos
   useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/todos')
       .then(response => response.json())
@@ -31,7 +35,7 @@ const TaskTable = () => {
             id: todo.id,
             name: `Task ${todo.id}`,
             description: todo.title.trim(),
-            status: todo.completed === true ? 'Complete' : 'To Do'
+            status: todo.completed === true ? 'Completed' : 'To Do'
         }));
 
         dispatch({type: 'task/setInitial', payload: initial_tasks})
@@ -41,7 +45,6 @@ const TaskTable = () => {
       });
   }, []);
   
-
 
   const addTask = (newTask) => {
     dispatch({ type: 'task/add', payload: newTask });
@@ -83,8 +86,7 @@ const TaskTable = () => {
           )}
         </tbody>
       </table>
-      {/* Conditionally render <CreateTask /> based on `showForm` value and pass necessary functions. */}
-      <CreateTask addTask={addTask} setShowForm={setShowForm} tasks={tasks}/>
+      {showForm && <CreateTask addTask={addTask} setShowForm={setShowForm} tasks={tasks}/>}
     </div>
   );
 };
