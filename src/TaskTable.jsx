@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 
 import CreateTask from './CreateTask.jsx';
 
-//TODO
+
 const taskReducer = (state, action) => {
   switch (action.type) {
     case 'task/add':
-      return state;
+      return [...state, action.payload];
     case 'task/toggleStatus':
       return state;
+    case 'task/setInitial':
+      return action.payload;
     default:
       return state;
   }
@@ -16,17 +18,37 @@ const taskReducer = (state, action) => {
 
 const TaskTable = () => {
   const [showForm, setShowForm] = useState(false);
+  const [tasks, dispatch] = useReducer(taskReducer, []);
 
   //TODO: fetch 5 todo and add them to tasks from https://jsonplaceholder.typicode.com/todos when the component is first rendered.
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos')
+      .then(response => response.json())
+      .then( todos => {
+        const firstFive_todos = todos.slice(0, 5);
 
-  //TODO: addTask function
+        const initial_tasks = firstFive_todos.map(todo => ({
+            id: todo.id,
+            name: `Task ${todo.id}`,
+            description: todo.title.trim(),
+            status: todo.completed === true ? 'Complete' : 'To Do'
+        }));
+
+        dispatch({type: 'task/setInitial', payload: initial_tasks})
+      })
+      .catch(error => {
+        console.error('Error fetching default todo list', error)
+      });
+  }, []);
+  
+
+
   const addTask = (newTask) => {
-    console.log('add newTask!');
+    dispatch({ type: 'task/add', payload: newTask });
   };
 
-  //TODO: toggleStatus function
   const toggleStatus = (taskId) => {
-    console.log(`toggle status of {taskId}`);
+    dispatch({ type: 'task/toggleStatus', payload: taskId });
   };
 
   return (
@@ -44,10 +66,25 @@ const TaskTable = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>TODO</tbody>
+        <tbody>
+          {tasks.length === 0 ? (
+            <tr>
+              <td colSpan="4">No tasks yet. Create one!</td>
+            </tr>
+          ) : (
+            tasks.map((task) => (
+              <tr key={task.id} className={task.status === 'Completed' ? 'completed': ''}>
+                <td>{task.name}</td>  
+                <td>{task.description}</td>
+                <td>{task.status}</td>
+                <td><button onClick={() => toggleStatus(task.id)}>Toggle Status</button></td>
+              </tr>
+            ))            
+          )}
+        </tbody>
       </table>
       {/* Conditionally render <CreateTask /> based on `showForm` value and pass necessary functions. */}
-      <CreateTask />
+      <CreateTask addTask={addTask} setShowForm={setShowForm} tasks={tasks}/>
     </div>
   );
 };
