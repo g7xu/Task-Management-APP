@@ -1,102 +1,104 @@
-# Task Manager - React Application
+# Task Management App - Building the wheel
 
-## Goal
+This repository demonstrates my learning journey with React frontend development. It's a simple web application (WAP) frontend interface powered by React that performs basic task management operations.
 
-Create a task management page using React **functional components**. The page allows users to:
+## Thinking Process
 
-- View all tasks with their name, description, and status.
-- Add new tasks to the list with a name and description.
-- Toggle the status of tasks between "To Do" and "Completed".
-- Strike through the text for tasks marked as "Completed".
-- The page initially displays tasks fetched from a sample API.
+I chose to use functional components to construct the app for several reasons:
+- **Modern approach**: Functional components are the current standard in React development
+- **Simpler syntax**: No need for `this` binding, making the code cleaner and easier to understand
+- **Hooks for state management**: React Hooks provide a powerful way to manage state and side effects
 
-## Features
+I implemented `useReducer` to manage and update tasks, which allowed me to:
+- Handle different action cases for task status changes, task creation, and initial data fetching
+- Centralize state management logic in a single reducer function
+- Realize the power and flexibility of `useReducer` for complex state updates
 
-- **Task List**: Displays a list of tasks with their **name**, **description**, and **status**.
-  - **name**: The name of the task.
-  - **description**: A short description for the task.
-  - **status**: The current status of the task, which can either be "To Do" or "Completed".
-  - Each task has an option to toggle the status between "To Do" and "Completed".
-- **Task Creation**: Allows users to add new tasks to the list with custom **name** and **description**. When the task is first created, its id should be assigned to the total task length + 1 and the status is set to "To Do".
-- **Toggle Task Status**: Users can change the task status between "To Do" and "Completed".
-- **CSS for Completed Tasks**: Completed tasks are visually distinguished by a strikethrough effect.
+Another important learning was the use of `e.preventDefault()` in form handling. This is a standard approach in React that prevents the default HTML form submission behavior, allowing us to manage and handle forms programmatically without the page reloading and losing state.
 
-## Components
 
-### TaskTable
+## Data Flow
 
-This component is responsible for displaying the task list and handling the task status toggle.
+The application follows a unidirectional data flow pattern:
 
-- **State Management**: Tasks are stored in state and can be updated using a reducer.
-  - When a task is at "Completed" status, a className="completed" should be assigned to this row so a strike-through CSS will be applied to this row to show a CSS effect.
-- **Task Status Toggle**: A button allows users to toggle between "To Do" and "Completed" statuses for each task.
-- We have a button on the top of the table to demonstrate whether the **CreateTask** component is displayed.
-- Initially, TaskTable should fetch only **5** top results from this API when the component first loads: [https://jsonplaceholder.typicode.com/todos](https://jsonplaceholder.typicode.com/todos).
-  - For each `todo` fetched from the API, construct a `task` object by mapping the `todo` fields:
-    - `id`: Map to `todo.id`.
-    - `name`: Set as the string `'Task {id}'`, where `{id}` is the `todo.id`.
-    - `description`: Map to `todo.title`.
-    - `status`: Map to `todo.completed`:
-      - If `completed` is `true`, set the `status` to `"Completed"`.
-      - If `completed` is `false`, set the `status` to `"To Do"`.
+1. **Initial Data Loading**: On mount, `TaskTable` fetches the first 5 tasks from the API and transforms them into the application's task format.
 
-### CreateTask
+2. **State Management**: Tasks are managed via `useReducer` with three actions: `task/add`, `task/toggleStatus`, and `task/setInitial`.
 
-This component handles the creation of new tasks. It is displayed when the "Create Task" button is clicked.
+3. **User Interactions**: Actions trigger `dispatch` calls that update state through the reducer, flowing down to child components like `CreateTask` via props and callback functions.
 
-- **Task Creation**: Users can enter the task **name** and **description** and add it to the task list.
-- **Form Validation**: The form ensures that both the task name and description are provided before submission.
-- A Cancel button should be provided so we can hide the current component and cancel this action.
+4. **Conditional Rendering**: The `showForm` state controls `CreateTask` component visibility.
 
-## Instructions
+## Key Learnings
 
-### 1. Fork the Project
+This project helped me understand several fundamental React concepts:
 
-- Click the **[Fork this project on StackBlitz](https://stackblitz.com/edit/vitejs-vite-8kpvgxzr)** link to create a copy of the project in your StackBlitz account.
+- **React Hooks**: Learned to use `useState` for simple state management and `useReducer` for complex state logic with multiple action types
+- **Controlled Components**: Implemented form inputs as controlled components where React manages the form data through state, ensuring the UI always reflects the current state
+- **API Integration**: Learned to fetch data from external APIs using the `fetch` API, transform the data to match the application's data structure, and handle it with `useEffect`
 
-### 2. Install Dependencies
+## Quick Start
 
-- Once you’ve forked the project, open the project in StackBlitz or your local development environment.
-- Run `npm install` to install the required dependencies.
+### Prerequisites
 
-### 3. Run the Application
+- Node.js (v18 or higher)
+- npm or yarn
 
-- Run the application locally using `npm run dev`, or if using StackBlitz, it will automatically start a live preview.
-- The task manager page will load with tasks displayed from the API, and you can start interacting with the application.
+### Installation
 
-### 4. Complete the Functions to make the application work
+Clone the repository:
 
-## Code Structure
+```bash
+git clone https://github.com/g7xu/Task-Management-APP.git
+cd Task-Management-APP
+```
 
-- **src**: Contains the `TaskTable` and `CreateTask` components.
-  - `TaskTable.jsx`: Displays the task list and manages state using a reducer.
-  - `CreateTask.jsx`: Form for adding new tasks.
+Install dependencies:
 
-## Setup Instructions
+```bash
+npm install
+```
 
-1. **Fork this project**:
+Start the development server:
 
-   - Click the **[Fork this project on StackBlitz](https://stackblitz.com/edit/vitejs-vite-8kpvgxzr)** link to create a copy of the project in your StackBlitz account.
+```bash
+npm run dev
+```
 
-2. **Start Editing**:
+Open your browser and navigate to the URL shown in the terminal (typically http://localhost:5173)
 
-   - Once you’ve forked the project, you can start editing directly in the StackBlitz editor or your local development environment.
+### Build for Production
 
-3. **Live Preview**:
+```bash
+npm run build
+```
 
-   - StackBlitz will automatically start a live preview for you, allowing you to see the app running in the browser.
+The built files will be in the `dist` directory.
 
-4. **Make Your Changes**:
-   - Implement the required functionality as described in the instructions.
+### Preview Production Build
 
----
+```bash
+npm run preview
+```
 
-## Notes
+## File Structure
 
-- Uses **React functional components** and **hooks** to help you achieve the functionalities (`useState`, `useReducer`, `useEffect`).
-- Be sure to structure your code according to React's best practices for functional components.
-
-## Submission Instructions
-
-- **Copy your StackBlitz link** after completing the project.
-- **Submit the link to Drill** for grading.
+```
+Task-Management-APP/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          # GitHub Actions workflow for deployment
+├── public/
+│   └── vite.svg                # Public assets
+├── src/
+│   ├── App.jsx                 # Root component
+│   ├── App.css                 # App-specific styles
+│   ├── TaskTable.jsx           # Main TaskTable component with state management
+│   ├── CreateTask.jsx          # Form component for creating new tasks
+│   ├── main.jsx                # Application entry point
+│   └── index.css               # Global styles
+├── index.html                  # HTML template
+├── vite.config.ts              # Vite configuration
+├── package.json                # Project dependencies and scripts
+└── README.md                   # This file
+```
