@@ -13,7 +13,6 @@ const CreateTask = ({ addTask, setShowForm, tasks }) => {
       return;
     }
 
-    //TODO: add task to tasks. destroy current component.
     const newTask = {
       id: tasks.length + 1,
       name: name.trim(),

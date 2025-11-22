@@ -55,7 +55,7 @@ const TaskTable = () => {
   };
 
   return (
-    <div>
+    <div className="task-manager-container">
       <h1>Task Manager</h1>
       <button onClick={() => setShowForm(true)} disabled={showForm}>
         Create Task
